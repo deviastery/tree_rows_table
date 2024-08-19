@@ -1,0 +1,18 @@
+{
+  "baseUrl": ".",
+  "include": ["src"],
+  "files": ["declarations.d.ts"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "strict": true,
+    "sourceMap": true,
+    "module": "esnext",
+    "target": "es6",
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
+    "jsx": "react-jsx",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "resolveJsonModule": true
+  }
+}
