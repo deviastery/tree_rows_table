@@ -8,7 +8,7 @@ import Workspace from "./components/Workspace";
 import theme from "./styles/theme";
 import ProjectsList from "./components/ProjectsList";
 import ProjectSpace from "./components/ProjectSpace";
-// import useAppDispatch from "./store/hooks/useAppDispatch";
+import useAppDispatch from "./store/hooks/useAppDispatch";
 import { useCreateEntityMutation } from "./api/tableApi";
 import { setEntityId } from "./store/slices/entityId";
 

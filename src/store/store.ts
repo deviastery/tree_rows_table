@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import tableApi from "src/api/tableApi";
+import entityIdReducer from "./slices/entityId";
 
 export const store = configureStore({
   reducer: {
     [tableApi.reducerPath]: tableApi.reducer,
+    entityId: entityIdReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(tableApi.middleware),
