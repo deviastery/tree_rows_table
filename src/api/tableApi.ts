@@ -14,7 +14,7 @@ const tableApi = createApi({
   refetchOnMountOrArgChange: true,
   baseQuery: fetchBaseQuery({ baseUrl: "http://185.244.172.108:8081/" }),
   endpoints: (builder) => ({
-    getTreeRows: builder.mutation<TreeResponse, number>({
+    getTreeRows: builder.query<TreeResponse, number>({
       query: (eID) => ({
         url: `/v1/outlay-rows/entity/${eID}/row/list`,
         params: {
@@ -55,7 +55,7 @@ const tableApi = createApi({
 });
 
 export const {
-  useGetTreeRowsMutation,
+  useGetTreeRowsQuery,
   useCreateEntityMutation,
   useCreateRowInEntityMutation,
   useUpdateRowMutation,

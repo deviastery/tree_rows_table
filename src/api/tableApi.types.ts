@@ -13,10 +13,11 @@ type RowResponse = {
   total: number;
 };
 
-type TreeResponse = RowResponse &
-  {
-    child: TreeResponse;
-  }[];
+type TreeRowResponse = RowResponse & {
+  child: TreeRowResponse;
+};
+
+type TreeResponse = TreeRowResponse[];
 
 type EntityResponse = {
   id: number;
@@ -61,6 +62,7 @@ type RecalculatedRows = {
 };
 
 export {
+  TreeRowResponse,
   TreeResponse,
   EntityResponse,
   OutlayRowFullRequest,
