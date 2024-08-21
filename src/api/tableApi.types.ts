@@ -13,18 +13,6 @@ type RowResponse = {
   total: number;
 };
 
-type TreeRowResponse = RowResponse & {
-  child?: TreeRowResponse[];
-  subRows?: TreeRowResponse[];
-};
-
-type TreeResponse = TreeRowResponse[];
-
-type EntityResponse = {
-  id: number;
-  rowName: string;
-};
-
 type OutlayRowRequest = {
   equipmentCosts: number;
   estimatedProfit: number;
@@ -37,6 +25,18 @@ type OutlayRowRequest = {
   rowName: string;
   salary: number;
   supportCosts: number;
+};
+
+type TreeRowResponse = RowResponse & {
+  child?: TreeRowResponse[];
+  subRows?: TreeRowResponse[];
+};
+
+type TreeResponse = TreeRowResponse[];
+
+type EntityResponse = {
+  id: number;
+  rowName: string;
 };
 
 type OutlayRowUpdateRequest = Omit<OutlayRowRequest, "parentId">;
@@ -67,6 +67,7 @@ export {
   TreeResponse,
   EntityResponse,
   OutlayRowFullRequest,
+  OutlayRowRequest,
   RecalculatedRows,
   OutlayRowUpdateFullRequest,
   OutlayRowDeleteRequest,

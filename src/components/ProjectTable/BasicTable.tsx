@@ -12,19 +12,48 @@ import {
   getExpandedRowModel,
 } from "@tanstack/react-table";
 import styles from "./BasicTable.module.sass";
-import { TreeRowResponse } from "src/api/tableApi.types";
+import { OutlayRowRequest, TreeRowResponse } from "src/api/tableApi.types";
 import DataNotFoundBox from "../DataNotFoundBox/DataNotFoundBox";
+import GetTableColumns from "./tableColumns";
 
 type Props = {
-  columns: ColumnDef<TreeRowResponse | undefined>[];
   data: (TreeRowResponse | undefined)[];
-  setRowData?: Dispatch<SetStateAction<Row<TreeRowResponse> | null>>;
+  columns: ColumnDef<TreeRowResponse | undefined>[];
+  setRowClick?: Dispatch<SetStateAction<Row<TreeRowResponse> | null>>;
 };
 
-const BasicTable = ({ columns, data, setRowData }: Props) => {
+const BasicTable = ({ data, columns, setRowClick }: Props) => {
   const [expanded, setExpanded] = useState<ExpandedState>(
     data.reduce((acc, row, index) => ({ ...acc, [row?.id || index]: true }), {})
   );
+  // const [rowsData, setRowsData] = useState(() => [...data]);
+  // const [originalData, setOriginalData] = useState(() => [...data]);
+
+  // const addRow = () => {
+  //   console.log("Click");
+
+  //   const newRow: TreeRowResponse = {
+  //     equipmentCosts: 0,
+  //     estimatedProfit: 0,
+  //     id: Math.floor(Math.random() * 10000),
+  //     machineOperatorSalary: 0,
+  //     mainCosts: 0,
+  //     materials: 0,
+  //     mimExploitation: 0,
+  //     overheads: 0,
+  //     rowName: "",
+  //     salary: 0,
+  //     supportCosts: 0,
+  //     total: 0,
+  //   };
+  //   const setFunc = (old: (TreeRowResponse | undefined)[]) => [...old, newRow];
+  //   setRowsData(setFunc);
+  //   setOriginalData(setFunc);
+  // };
+
+  // const columns = GetTableColumns({ addRow }) as ColumnDef<
+  //   TreeRowResponse | undefined
+  // >[];
 
   const table = useReactTable({
     data,

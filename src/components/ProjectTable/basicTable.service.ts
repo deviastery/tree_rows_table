@@ -1,6 +1,6 @@
 import { TreeRowResponse } from "src/api/tableApi.types";
 
-export const convertToTableData = (data: TreeRowResponse[]) => {
+const convertToTableData = (data: TreeRowResponse[]) => {
   return data.map((row) => {
     if (!row.child?.length) {
       return row;
@@ -27,3 +27,5 @@ export const convertToTableData = (data: TreeRowResponse[]) => {
     return newRow;
   });
 };
+
+export { convertToTableData };

@@ -1,23 +1,71 @@
 import React, { useState } from "react";
 import { createColumnHelper } from "@tanstack/table-core";
-import { TreeRowResponse } from "src/api/tableApi.types";
+import { TreeRowResponse, OutlayRowRequest } from "src/api/tableApi.types";
 import DescriptionIcon from "@mui/icons-material/Description";
 import DeleteIcon from "@mui/icons-material/Delete";
 import styles from "./BasicTable.module.sass";
+import { useCreateRowInEntityMutation } from "src/api/tableApi";
+import { useSelector } from "react-redux";
+import { RootState } from "src/store/store";
 
 const columnHelper = createColumnHelper<TreeRowResponse>();
 
-const GetTableColumns = () => {
+type Props = {
+  setData: React.Dispatch<React.SetStateAction<TreeRowResponse[]>>;
+  setOriginalData: React.Dispatch<React.SetStateAction<TreeRowResponse[]>>;
+  addRow: (
+    id: number,
+    setData: React.Dispatch<React.SetStateAction<TreeRowResponse[]>>,
+    setOriginalData: React.Dispatch<React.SetStateAction<TreeRowResponse[]>>
+  ) => void;
+};
+const GetTableColumns = ({ addRow, setData, setOriginalData }: Props) => {
+  const entityId = useSelector((state: RootState) => state.entityId);
   const [showAdditionalIcons, setShowAdditionalIcons] = useState(false);
+  const [newRows, setNewRows] = useState<OutlayRowRequest[]>([]);
+
+  const [createRow] = useCreateRowInEntityMutation();
+
+  const handleSubmit = (data: OutlayRowRequest) => {
+    createRow({
+      eID: entityId,
+      request: data,
+    })
+      .unwrap()
+      .then(() => {
+        console.log("success");
+      })
+      .catch(() => {});
+  };
+
+  const handleCreate = (parentId: number) => {
+    setNewRows([
+      ...newRows,
+      {
+        equipmentCosts: 0,
+        estimatedProfit: 0,
+        machineOperatorSalary: 0,
+        mainCosts: 0,
+        materials: 0,
+        mimExploitation: 0,
+        overheads: 0,
+        parentId: parentId,
+        rowName: "",
+        salary: 0,
+        supportCosts: 0,
+      },
+    ]);
+  };
+
   return [
     columnHelper.accessor("id", {
       size: 50,
       header: () => <span>Уровень</span>,
-      cell: ({ row }) => (
+      cell: (info) => (
         <div
           className={styles.expander}
           style={{
-            paddingLeft: `${row.depth * 2}rem`,
+            paddingLeft: `${info.row.depth * 2}rem`,
           }}
         >
           <div
@@ -27,7 +75,12 @@ const GetTableColumns = () => {
             onMouseEnter={() => setShowAdditionalIcons(true)}
             onMouseLeave={() => setShowAdditionalIcons(false)}
           >
-            <DescriptionIcon className={styles.icon_doc} />
+            <DescriptionIcon
+              className={styles.icon_doc}
+              onClick={() =>
+                addRow(info?.row?.original?.id, setData, setOriginalData)
+              }
+            />
             {showAdditionalIcons && (
               <>
                 <DeleteIcon className={styles.icon_delete} />
@@ -40,7 +93,7 @@ const GetTableColumns = () => {
     columnHelper.accessor("rowName", {
       size: 400,
       header: () => <span>Наименование работ</span>,
-      cell: ({ row, getValue }) => <div className="expander">{getValue()}</div>,
+      cell: (info) => <div className="expander">{info.getValue()}</div>,
     }),
     columnHelper.accessor("salary", {
       size: 150,
