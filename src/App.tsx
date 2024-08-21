@@ -13,30 +13,28 @@ import { useCreateEntityMutation } from "./api/tableApi";
 import { setEntityId } from "./store/slices/entityId";
 
 const App = () => {
-  // const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
 
-  // const [createEntity] = useCreateEntityMutation();
+  const [createEntity] = useCreateEntityMutation();
 
-  // useEffect(() => {
-  //   createEntity()
-  //     .unwrap()
-  //     .then((data) => {
-  //       // dispatch(setEntityId(data.id));
-  //     })
-  //     .catch(() => {});
-  // });
+  useEffect(() => {
+    createEntity()
+      .unwrap()
+      .then((data) => {
+        dispatch(setEntityId(data.id));
+      })
+      .catch(() => {});
+  }, []);
 
   return (
-    <Provider store={store}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <AppTemplate />
-        <Workspace>
-          <ProjectsList />
-          <ProjectSpace />
-        </Workspace>
-      </ThemeProvider>
-    </Provider>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <AppTemplate />
+      <Workspace>
+        <ProjectsList />
+        <ProjectSpace />
+      </Workspace>
+    </ThemeProvider>
   );
 };
 

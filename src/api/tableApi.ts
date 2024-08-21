@@ -25,6 +25,7 @@ const tableApi = createApi({
     createEntity: builder.mutation<EntityResponse, void>({
       query: () => ({
         url: "/v1/outlay-rows/entity/create",
+        method: "POST",
       }),
     }),
     createRowInEntity: builder.mutation<RecalculatedRows, OutlayRowFullRequest>(

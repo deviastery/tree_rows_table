@@ -14,7 +14,8 @@ type RowResponse = {
 };
 
 type TreeRowResponse = RowResponse & {
-  child: TreeRowResponse;
+  child?: TreeRowResponse[];
+  subRows?: TreeRowResponse[];
 };
 
 type TreeResponse = TreeRowResponse[];

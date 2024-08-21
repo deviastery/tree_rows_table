@@ -1,30 +1,42 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import { Box } from "@mui/material";
 import {
+  ExpandedState,
   ColumnDef,
   flexRender,
   getCoreRowModel,
   Row,
   useReactTable,
+  getExpandedRowModel,
 } from "@tanstack/react-table";
 import styles from "./BasicTable.module.sass";
+import { TreeRowResponse } from "src/api/tableApi.types";
+import DataNotFoundBox from "../DataNotFoundBox/DataNotFoundBox";
 
-type Props<T, S> = {
-  columns: Array<ColumnDef<T, S>>;
-  data: T[];
-  setRowData?: Dispatch<SetStateAction<Row<T> | null>>;
+type Props = {
+  columns: ColumnDef<TreeRowResponse | undefined>[];
+  data: (TreeRowResponse | undefined)[];
+  setRowData?: Dispatch<SetStateAction<Row<TreeRowResponse> | null>>;
 };
 
-const BasicTable = <T, S>({ columns, data, setRowData }: Props<T, S>) => {
+const BasicTable = ({ columns, data, setRowData }: Props) => {
+  const [expanded, setExpanded] = useState<ExpandedState>({});
+
   const table = useReactTable({
     data,
     columns,
+    state: {
+      expanded,
+    },
     debugTable: true,
     debugHeaders: true,
     debugColumns: false,
-    getCoreRowModel: getCoreRowModel(),
+    onExpandedChange: setExpanded,
+    getSubRows: (row) => row?.subRows,
+    getCoreRowModel: getCoreRowModel<TreeRowResponse | undefined>(),
+    getExpandedRowModel: getExpandedRowModel<TreeRowResponse | undefined>(),
   });
 
   return (
@@ -47,25 +59,33 @@ const BasicTable = <T, S>({ columns, data, setRowData }: Props<T, S>) => {
           ))}
         </thead>
         <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr
-              key={row.id}
-              className={styles.tableRow}
-              onDoubleClick={() => setRowData && setRowData(row)}
-            >
-              {row.getVisibleCells().map((cell) => (
-                <td
-                  key={cell.id}
-                  style={{
-                    width: cell.column.getSize(),
-                  }}
-                  className={styles.tableCell}
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
+          {!data || !data?.length ? (
+            <tr className={styles.tableRow}>
+              <td colSpan={6} className={styles.tableCell}>
+                <DataNotFoundBox title="Список заявок пуст. Приходите позже" />
+              </td>
             </tr>
-          ))}
+          ) : (
+            table.getRowModel().rows.map((row) => (
+              <tr
+                key={row.id}
+                className={styles.tableRow}
+                // onDoubleClick={() => setRowData && setRowData(row)}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <td
+                    key={cell.id}
+                    style={{
+                      width: cell.column.getSize(),
+                    }}
+                    className={styles.tableCell}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </Box>
