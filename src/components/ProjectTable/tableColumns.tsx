@@ -1,77 +1,46 @@
-import React from "react";
+import React, { useState } from "react";
 import { createColumnHelper } from "@tanstack/table-core";
 import { TreeRowResponse } from "src/api/tableApi.types";
+import DescriptionIcon from "@mui/icons-material/Description";
+import DeleteIcon from "@mui/icons-material/Delete";
+import styles from "./BasicTable.module.sass";
 
 const columnHelper = createColumnHelper<TreeRowResponse>();
 
 const GetTableColumns = () => {
+  const [showAdditionalIcons, setShowAdditionalIcons] = useState(false);
   return [
     columnHelper.accessor("id", {
       size: 50,
       header: () => <span>Уровень</span>,
       cell: ({ row }) => (
         <div
-          className="expander"
+          className={styles.expander}
           style={{
             paddingLeft: `${row.depth * 2}rem`,
           }}
         >
-          {row.getCanExpand() && (
-            <button
-              className="toggle-expanded"
-              {...{
-                onClick: row.getToggleExpandedHandler(),
-              }}
-            >
-              {row.getIsExpanded() ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  width="16"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="#777"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  width="16"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="#777"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M8.25 4.5l7.5 7.5-7.5 7.5"
-                  />
-                </svg>
-              )}
-            </button>
-          )}
+          <div
+            className={
+              showAdditionalIcons ? styles.icon_box_hovered : styles.icon_box
+            }
+            onMouseEnter={() => setShowAdditionalIcons(true)}
+            onMouseLeave={() => setShowAdditionalIcons(false)}
+          >
+            <DescriptionIcon className={styles.icon_doc} />
+            {showAdditionalIcons && (
+              <>
+                <DeleteIcon className={styles.icon_delete} />
+              </>
+            )}
+          </div>
         </div>
       ),
     }),
     columnHelper.accessor("rowName", {
       size: 400,
       header: () => <span>Наименование работ</span>,
-      cell: ({ row, getValue }) => (
-        <div
-          className="expander"
-          style={{
-            paddingLeft: `${row.depth * 2}rem`,
-          }}
-        >
-          {getValue()}
-        </div>
-      ),
+      cell: ({ row, getValue }) => <div className="expander">{getValue()}</div>,
     }),
     columnHelper.accessor("salary", {
       size: 150,
