@@ -22,14 +22,14 @@ type Props = {
 };
 
 const BasicTable = ({ columns, data, setRowData }: Props) => {
-  const [expanded, setExpanded] = useState<ExpandedState>({});
+  const [expanded, setExpanded] = useState<ExpandedState>(
+    data.reduce((acc, row, index) => ({ ...acc, [row?.id || index]: true }), {})
+  );
 
   const table = useReactTable({
     data,
     columns,
-    state: {
-      expanded,
-    },
+    state: { expanded },
     debugTable: true,
     debugHeaders: true,
     debugColumns: false,
@@ -38,6 +38,10 @@ const BasicTable = ({ columns, data, setRowData }: Props) => {
     getCoreRowModel: getCoreRowModel<TreeRowResponse | undefined>(),
     getExpandedRowModel: getExpandedRowModel<TreeRowResponse | undefined>(),
   });
+
+  useEffect(() => {
+    table.toggleAllRowsExpanded(true);
+  }, []);
 
   return (
     <Box className={styles.tableTemplate}>
@@ -72,7 +76,7 @@ const BasicTable = ({ columns, data, setRowData }: Props) => {
                 className={styles.tableRow}
                 // onDoubleClick={() => setRowData && setRowData(row)}
               >
-                {row.getVisibleCells().map((cell) => (
+                {row.getAllCells().map((cell) => (
                   <td
                     key={cell.id}
                     style={{

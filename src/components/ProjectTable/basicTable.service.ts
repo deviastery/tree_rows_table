@@ -3,7 +3,6 @@ import { TreeRowResponse } from "src/api/tableApi.types";
 export const convertToTableData = (data: TreeRowResponse[]) => {
   return data.map((row) => {
     if (!row.child?.length) {
-      // Оставляем исходный объект row без изменений
       return row;
     }
 
@@ -11,7 +10,6 @@ export const convertToTableData = (data: TreeRowResponse[]) => {
       ...row,
       subRows: row.child!.map((child) => {
         if (!child.child?.length) {
-          // Оставляем исходный объект child без изменений
           return child;
         }
 
