@@ -19,13 +19,14 @@ import GetTableColumns from "./tableColumns";
 type Props = {
   data: (TreeRowResponse | undefined)[];
   columns: ColumnDef<TreeRowResponse | undefined>[];
-  setRowClick?: Dispatch<SetStateAction<Row<TreeRowResponse> | null>>;
+  setRowEdit: (e: Event, meta: any, row: any) => void;
 };
 
-const BasicTable = ({ data, columns, setRowClick }: Props) => {
+const BasicTable = ({ data, columns, setRowEdit }: Props) => {
   const [expanded, setExpanded] = useState<ExpandedState>(
     data.reduce((acc, row, index) => ({ ...acc, [row?.id || index]: true }), {})
   );
+  const [editedRows, setEditedRows] = useState({});
   // const [rowsData, setRowsData] = useState(() => [...data]);
   // const [originalData, setOriginalData] = useState(() => [...data]);
 
@@ -66,6 +67,10 @@ const BasicTable = ({ data, columns, setRowClick }: Props) => {
     getSubRows: (row) => row?.subRows,
     getCoreRowModel: getCoreRowModel<TreeRowResponse | undefined>(),
     getExpandedRowModel: getExpandedRowModel<TreeRowResponse | undefined>(),
+    meta: {
+      editedRows,
+      setEditedRows,
+    },
   });
 
   useEffect(() => {
@@ -103,7 +108,7 @@ const BasicTable = ({ data, columns, setRowClick }: Props) => {
               <tr
                 key={row.id}
                 className={styles.tableRow}
-                // onDoubleClick={() => setRowData && setRowData(row)}
+                onDoubleClick={() => setRowEdit}
               >
                 {row.getAllCells().map((cell) => (
                   <td
