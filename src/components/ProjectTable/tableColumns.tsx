@@ -11,15 +11,17 @@ import { RootState } from "src/store/store";
 const columnHelper = createColumnHelper<TreeRowResponse>();
 
 type Props = {
+  data: TreeRowResponse[];
   setData: React.Dispatch<React.SetStateAction<TreeRowResponse[]>>;
   setOriginalData: React.Dispatch<React.SetStateAction<TreeRowResponse[]>>;
   addRow: (
     id: number,
+    data: TreeRowResponse[],
     setData: React.Dispatch<React.SetStateAction<TreeRowResponse[]>>,
     setOriginalData: React.Dispatch<React.SetStateAction<TreeRowResponse[]>>
   ) => void;
 };
-const GetTableColumns = ({ addRow, setData, setOriginalData }: Props) => {
+const GetTableColumns = ({ addRow, data, setData, setOriginalData }: Props) => {
   const entityId = useSelector((state: RootState) => state.entityId);
   const [showAdditionalIcons, setShowAdditionalIcons] = useState(false);
   const [newRows, setNewRows] = useState<OutlayRowRequest[]>([]);
@@ -78,7 +80,7 @@ const GetTableColumns = ({ addRow, setData, setOriginalData }: Props) => {
             <DescriptionIcon
               className={styles.icon_doc}
               onClick={() =>
-                addRow(info?.row?.original?.id, setData, setOriginalData)
+                addRow(info?.row?.original?.id, data, setData, setOriginalData)
               }
             />
             {showAdditionalIcons && (

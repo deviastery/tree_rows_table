@@ -18,60 +18,29 @@ import { addRow } from "./ProjectSpace.service";
 const ProjectSpace = () => {
   const entityId = useSelector((state: RootState) => state.entityId);
 
-  const { data: tableData = [] } = useGetTreeRowsQuery(1);
-
+  const { data: tableData = [], isLoading } = useGetTreeRowsQuery(1);
   const [data, setData] = useState(() => [...convertToTableData(tableData)]);
-  const [originalData, setOriginalData] = useState(() => [
-    ...convertToTableData(tableData),
-  ]);
-
-  // const addRow = (id: number) => {
-  //   const newRow: TreeRowResponse = {
-  //     equipmentCosts: 0,
-  //     estimatedProfit: 0,
-  //     id: Math.floor(Math.random() * 10000),
-  //     machineOperatorSalary: 0,
-  //     mainCosts: 0,
-  //     materials: 0,
-  //     mimExploitation: 0,
-  //     overheads: 0,
-  //     rowName: "",
-  //     salary: 0,
-  //     supportCosts: 0,
-  //     total: 0,
-  //   };
-
-  //   const updateData = (data: TreeRowResponse[]): TreeRowResponse[] => {
-  //     return data.map((row) => {
-  //       if (row.id === id) {
-  //         // Если id совпадает, добавляем новую строку как дочерний элемент
-  //         row.subRows = [...(row.subRows || []), newRow];
-  //       } else if (row.subRows) {
-  //         // Рекурсивно обновляем дочерние элементы
-  //         row.subRows = updateData(row.subRows);
-  //       }
-  //       return row;
-  //     });
-  //   };
-
-  //   setData(updateData);
-  //   setOriginalData(updateData);
-  // };
+  const [originalData, setOriginalData] = useState(() => [...tableData]);
 
   useEffect(() => {
-    console.log(data);
-    setData(convertToTableData(tableData));
-  }, [tableData]);
+    if (!isLoading) {
+      setData(tableData);
+      setOriginalData(tableData);
+    }
+  }, [isLoading]);
 
   return (
     <Box className={styles.workspace}>
       <Box className={styles.table_title}>Строительно-монтажные работы</Box>
       <BasicTable
-        data={data as (TreeRowResponse | undefined)[]}
+        data={convertToTableData(data) as (TreeRowResponse | undefined)[]}
         columns={
-          GetTableColumns({ addRow, setData, setOriginalData }) as ColumnDef<
-            TreeRowResponse | undefined
-          >[]
+          GetTableColumns({
+            addRow,
+            data,
+            setData,
+            setOriginalData,
+          }) as ColumnDef<TreeRowResponse | undefined>[]
         }
       />
     </Box>

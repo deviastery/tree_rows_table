@@ -1,7 +1,10 @@
 import { TreeRowResponse } from "src/api/tableApi.types";
+import { convertToTableData } from "../ProjectTable/basicTable.service";
+import cloneDeep from "lodash.clonedeep";
 
 export const addRow = (
   id: number,
+  data: TreeRowResponse[],
   setData: React.Dispatch<React.SetStateAction<TreeRowResponse[]>>,
   setOriginalData: React.Dispatch<React.SetStateAction<TreeRowResponse[]>>
 ) => {
@@ -19,9 +22,10 @@ export const addRow = (
     supportCosts: 0,
     total: 0,
   };
+  let dataCopy = cloneDeep(data);
 
   const updateData = (data: TreeRowResponse[]): TreeRowResponse[] => {
-    return data.map((row) => {
+    return convertToTableData(data).map((row) => {
       if (row.id === id) {
         // Если id совпадает, добавляем новую строку как дочерний элемент
         row.subRows = [...(row.subRows || []), newRow];
@@ -33,6 +37,8 @@ export const addRow = (
     });
   };
 
-  setData(updateData);
-  setOriginalData(updateData);
+  const updatedData = updateData(dataCopy);
+
+  setData(updatedData);
+  setOriginalData(updatedData);
 };
