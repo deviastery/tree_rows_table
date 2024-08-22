@@ -13,20 +13,14 @@ import GetTableColumns from "../ProjectTable/tableColumns";
 import { ColumnDef } from "@tanstack/react-table";
 import { TreeRowResponse } from "src/api/tableApi.types";
 import { convertToTableData } from "../ProjectTable/basicTable.service";
-import { addRow, editData } from "./ProjectSpace.service";
-import useAppDispatch from "src/store/hooks/useAppDispatch";
-import { setTableData } from "src/store/slices/tableData";
+import { addRow } from "./ProjectSpace.service";
 
 const ProjectSpace = () => {
-  const dispatch = useAppDispatch();
   const entityId = useSelector((state: RootState) => state.entityId);
-  const [data, setData] = useState(
-    useSelector((state: RootState) => state.tableData)
-  );
 
   const { data: tableData = [] } = useGetTreeRowsQuery(1);
 
-  // const [data, setData] = useState(() => [...convertToTableData(tableData)]);
+  const [data, setData] = useState(() => [...convertToTableData(tableData)]);
   const [originalData, setOriginalData] = useState(() => [
     ...convertToTableData(tableData),
   ]);
@@ -65,10 +59,8 @@ const ProjectSpace = () => {
   // };
 
   useEffect(() => {
-    dispatch(setTableData(convertToTableData(tableData)));
-    setData(convertToTableData(tableData));
     console.log(data);
-    console.log(tableData);
+    setData(convertToTableData(tableData));
   }, [tableData]);
 
   return (
@@ -77,11 +69,10 @@ const ProjectSpace = () => {
       <BasicTable
         data={data as (TreeRowResponse | undefined)[]}
         columns={
-          GetTableColumns({ addRow }) as ColumnDef<
+          GetTableColumns({ addRow, setData, setOriginalData }) as ColumnDef<
             TreeRowResponse | undefined
           >[]
         }
-        setRowEdit={editData}
       />
     </Box>
   );

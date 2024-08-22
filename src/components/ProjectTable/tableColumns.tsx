@@ -1,20 +1,25 @@
 import React, { useState } from "react";
 import { createColumnHelper } from "@tanstack/table-core";
 import { TreeRowResponse, OutlayRowRequest } from "src/api/tableApi.types";
+import DescriptionIcon from "@mui/icons-material/Description";
+import DeleteIcon from "@mui/icons-material/Delete";
 import styles from "./BasicTable.module.sass";
 import { useCreateRowInEntityMutation } from "src/api/tableApi";
 import { useSelector } from "react-redux";
 import { RootState } from "src/store/store";
-import { TableCell } from "../EditTableCell/EditTableCell";
-import DescriptionIcon from "@mui/icons-material/Description";
-import DeleteIcon from "@mui/icons-material/Delete";
 
 const columnHelper = createColumnHelper<TreeRowResponse>();
 
 type Props = {
-  addRow: (id: number) => void;
+  setData: React.Dispatch<React.SetStateAction<TreeRowResponse[]>>;
+  setOriginalData: React.Dispatch<React.SetStateAction<TreeRowResponse[]>>;
+  addRow: (
+    id: number,
+    setData: React.Dispatch<React.SetStateAction<TreeRowResponse[]>>,
+    setOriginalData: React.Dispatch<React.SetStateAction<TreeRowResponse[]>>
+  ) => void;
 };
-const GetTableColumns = ({ addRow }: Props) => {
+const GetTableColumns = ({ addRow, setData, setOriginalData }: Props) => {
   const entityId = useSelector((state: RootState) => state.entityId);
   const [showAdditionalIcons, setShowAdditionalIcons] = useState(false);
   const [newRows, setNewRows] = useState<OutlayRowRequest[]>([]);
@@ -72,7 +77,9 @@ const GetTableColumns = ({ addRow }: Props) => {
           >
             <DescriptionIcon
               className={styles.icon_doc}
-              onClick={() => addRow(info?.row?.original?.id)}
+              onClick={() =>
+                addRow(info?.row?.original?.id, setData, setOriginalData)
+              }
             />
             {showAdditionalIcons && (
               <>
@@ -86,42 +93,27 @@ const GetTableColumns = ({ addRow }: Props) => {
     columnHelper.accessor("rowName", {
       size: 400,
       header: () => <span>Наименование работ</span>,
-      cell: TableCell,
-      meta: {
-        type: "text",
-      },
+      cell: (info) => <div className="expander">{info.getValue()}</div>,
     }),
     columnHelper.accessor("salary", {
       size: 150,
       header: () => <span>Основная з/п</span>,
-      cell: TableCell,
-      meta: {
-        type: "number",
-      },
+      cell: (info) => <span>{info.getValue()}</span>,
     }),
     columnHelper.accessor("equipmentCosts", {
       size: 150,
       header: () => <span>Оборудование</span>,
-      cell: TableCell,
-      meta: {
-        type: "number",
-      },
+      cell: (info) => <span>{info.getValue()}</span>,
     }),
     columnHelper.accessor("overheads", {
       size: 150,
       header: () => <span>Накладные расходы</span>,
-      cell: TableCell,
-      meta: {
-        type: "number",
-      },
+      cell: (info) => <span>{info.getValue()}</span>,
     }),
     columnHelper.accessor("estimatedProfit", {
       size: 150,
       header: () => <span>Сметная прибыль</span>,
-      cell: TableCell,
-      meta: {
-        type: "number",
-      },
+      cell: (info) => <span>{info.getValue()}</span>,
     }),
   ];
 };
