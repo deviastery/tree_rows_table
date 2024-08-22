@@ -19,8 +19,9 @@ const ProjectSpace = () => {
   const entityId = useSelector((state: RootState) => state.entityId);
 
   const { data: tableData = [], isLoading } = useGetTreeRowsQuery(1);
-  const [data, setData] = useState(() => [...convertToTableData(tableData)]);
+  const [data, setData] = useState(() => [...tableData]);
   const [originalData, setOriginalData] = useState(() => [...tableData]);
+  const [editedRows, setEditedRows] = useState({});
 
   useEffect(() => {
     if (!isLoading) {
@@ -36,12 +37,14 @@ const ProjectSpace = () => {
         data={convertToTableData(data) as (TreeRowResponse | undefined)[]}
         columns={
           GetTableColumns({
-            addRow,
             data,
             setData,
             setOriginalData,
+            setEditedRows,
           }) as ColumnDef<TreeRowResponse | undefined>[]
         }
+        editedRows={editedRows}
+        setEditedRows={setEditedRows}
       />
     </Box>
   );

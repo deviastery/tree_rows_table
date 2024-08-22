@@ -1,6 +1,17 @@
 import { TreeRowResponse } from "src/api/tableApi.types";
 import { convertToTableData } from "../ProjectTable/basicTable.service";
 import cloneDeep from "lodash.clonedeep";
+import { Row } from "@tanstack/react-table";
+
+const setRowClick = (
+  row: Row<TreeRowResponse | undefined>,
+  setEditedRows: React.Dispatch<React.SetStateAction<{}>>
+) => {
+  setEditedRows((old: Record<number, boolean>) => ({
+    ...old,
+    [row.id]: typeof row.id === "number" ? !old[row.id] : {},
+  }));
+};
 
 const addRow = (
   id: number,
@@ -83,4 +94,4 @@ const revertData = (
   }
 };
 
-export { addRow, updateData, revertData };
+export { setRowClick, addRow, updateData, revertData };

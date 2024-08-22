@@ -16,14 +16,14 @@ type Props = {
   data: TreeRowResponse[];
   setData: React.Dispatch<React.SetStateAction<TreeRowResponse[]>>;
   setOriginalData: React.Dispatch<React.SetStateAction<TreeRowResponse[]>>;
-  addRow: (
-    id: number,
-    data: TreeRowResponse[],
-    setData: React.Dispatch<React.SetStateAction<TreeRowResponse[]>>,
-    setOriginalData: React.Dispatch<React.SetStateAction<TreeRowResponse[]>>
-  ) => void;
+  setEditedRows: React.Dispatch<React.SetStateAction<{}>>;
 };
-const GetTableColumns = ({ addRow, data, setData, setOriginalData }: Props) => {
+const GetTableColumns = ({
+  data,
+  setData,
+  setOriginalData,
+  setEditedRows,
+}: Props) => {
   const entityId = useSelector((state: RootState) => state.entityId);
   const [showAdditionalIcons, setShowAdditionalIcons] = useState(false);
   const [newRows, setNewRows] = useState<OutlayRowRequest[]>([]);
@@ -66,7 +66,13 @@ const GetTableColumns = ({ addRow, data, setData, setOriginalData }: Props) => {
       size: 50,
       header: () => <span>Уровень</span>,
       cell: (info) =>
-        SpecialTableCell({ info, data, setData, setOriginalData }),
+        SpecialTableCell({
+          info,
+          data,
+          setData,
+          setOriginalData,
+          setEditedRows,
+        }),
     }),
     columnHelper.accessor("rowName", {
       size: 400,

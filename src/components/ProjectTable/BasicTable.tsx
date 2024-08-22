@@ -16,18 +16,21 @@ import styles from "./BasicTable.module.sass";
 import { OutlayRowRequest, TreeRowResponse } from "src/api/tableApi.types";
 import DataNotFoundBox from "../DataNotFoundBox/DataNotFoundBox";
 import GetTableColumns from "./tableColumns";
+import { setRowClick } from "../ProjectSpace/ProjectSpace.service";
 
 type Props = {
   data: (TreeRowResponse | undefined)[];
   columns: ColumnDef<TreeRowResponse | undefined>[];
   setRowClick?: Dispatch<SetStateAction<Row<TreeRowResponse> | null>>;
+  editedRows: {};
+  setEditedRows: React.Dispatch<React.SetStateAction<{}>>;
 };
 
-const BasicTable = ({ data, columns }: Props) => {
+const BasicTable = ({ data, columns, editedRows, setEditedRows }: Props) => {
   const [expanded, setExpanded] = useState<ExpandedState>(
     data.reduce((acc, row, index) => ({ ...acc, [row?.id || index]: true }), {})
   );
-  const [editedRows, setEditedRows] = useState({});
+  // const [editedRows, setEditedRows] = useState({});
 
   const table = useReactTable({
     data,
@@ -50,12 +53,12 @@ const BasicTable = ({ data, columns }: Props) => {
     table.toggleAllRowsExpanded(true);
   }, []);
 
-  const setRowClick = (row: Row<TreeRowResponse | undefined>) => {
-    setEditedRows((old: Record<number, boolean>) => ({
-      ...old,
-      [row.id]: typeof row.id === "number" ? !old[row.id] : {},
-    }));
-  };
+  // const setRowClick = (row: Row<TreeRowResponse | undefined>) => {
+  //   setEditedRows((old: Record<number, boolean>) => ({
+  //     ...old,
+  //     [row.id]: typeof row.id === "number" ? !old[row.id] : {},
+  //   }));
+  // };
 
   return (
     <Box className={styles.tableTemplate}>
@@ -88,7 +91,7 @@ const BasicTable = ({ data, columns }: Props) => {
               <tr
                 key={row.id}
                 className={styles.tableRow}
-                onDoubleClick={() => setRowClick(row)}
+                onDoubleClick={() => setRowClick(row, setEditedRows)}
               >
                 {row.getAllCells().map((cell) => (
                   <td

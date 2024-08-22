@@ -1,10 +1,14 @@
 import { useState, useEffect, ChangeEvent } from "react";
-import { addRow, updateData } from "../ProjectSpace/ProjectSpace.service";
+import {
+  addRow,
+  setRowClick,
+  updateData,
+} from "../ProjectSpace/ProjectSpace.service";
 import DescriptionIcon from "@mui/icons-material/Description";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 import styles from "./EditTableCell.module.sass";
-import { CellContext } from "@tanstack/react-table";
+import { CellContext, Row } from "@tanstack/react-table";
 import { TreeRowResponse } from "src/api/tableApi.types";
 
 type Props = {
@@ -12,9 +16,16 @@ type Props = {
   data: TreeRowResponse[];
   setData: React.Dispatch<React.SetStateAction<TreeRowResponse[]>>;
   setOriginalData: React.Dispatch<React.SetStateAction<TreeRowResponse[]>>;
+  setEditedRows: React.Dispatch<React.SetStateAction<{}>>;
 };
 
-const SpecialTableCell = ({ info, data, setData, setOriginalData }: Props) => {
+const SpecialTableCell = ({
+  info,
+  data,
+  setData,
+  setOriginalData,
+  setEditedRows,
+}: Props) => {
   const [showAdditionalIcons, setShowAdditionalIcons] = useState(false);
   return (
     <div
@@ -32,9 +43,13 @@ const SpecialTableCell = ({ info, data, setData, setOriginalData }: Props) => {
       >
         <DescriptionIcon
           className={styles.icon_doc}
-          onClick={() =>
-            addRow(info?.row?.original?.id, data, setData, setOriginalData)
-          }
+          onClick={() => {
+            addRow(info?.row?.original?.id, data, setData, setOriginalData);
+            setRowClick(
+              info?.row as Row<TreeRowResponse | undefined>,
+              setEditedRows
+            );
+          }}
         />
         {showAdditionalIcons && (
           <div>
