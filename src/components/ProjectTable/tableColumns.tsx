@@ -7,6 +7,8 @@ import styles from "./BasicTable.module.sass";
 import { useCreateRowInEntityMutation } from "src/api/tableApi";
 import { useSelector } from "react-redux";
 import { RootState } from "src/store/store";
+import { TableCell } from "../EditTableCell/EditTableCell";
+import { SpecialTableCell } from "../EditTableCell/SpecialEditTableCell";
 
 const columnHelper = createColumnHelper<TreeRowResponse>();
 
@@ -63,59 +65,48 @@ const GetTableColumns = ({ addRow, data, setData, setOriginalData }: Props) => {
     columnHelper.accessor("id", {
       size: 50,
       header: () => <span>Уровень</span>,
-      cell: (info) => (
-        <div
-          className={styles.expander}
-          style={{
-            paddingLeft: `${info.row.depth * 2}rem`,
-          }}
-        >
-          <div
-            className={
-              showAdditionalIcons ? styles.icon_box_hovered : styles.icon_box
-            }
-            onMouseEnter={() => setShowAdditionalIcons(true)}
-            onMouseLeave={() => setShowAdditionalIcons(false)}
-          >
-            <DescriptionIcon
-              className={styles.icon_doc}
-              onClick={() =>
-                addRow(info?.row?.original?.id, data, setData, setOriginalData)
-              }
-            />
-            {showAdditionalIcons && (
-              <>
-                <DeleteIcon className={styles.icon_delete} />
-              </>
-            )}
-          </div>
-        </div>
-      ),
+      cell: (info) =>
+        SpecialTableCell({ info, data, setData, setOriginalData }),
     }),
     columnHelper.accessor("rowName", {
       size: 400,
       header: () => <span>Наименование работ</span>,
-      cell: (info) => <div className="expander">{info.getValue()}</div>,
+      cell: (info) => TableCell(info, setData),
+      meta: {
+        type: "string",
+      },
     }),
     columnHelper.accessor("salary", {
       size: 150,
       header: () => <span>Основная з/п</span>,
-      cell: (info) => <span>{info.getValue()}</span>,
+      cell: (info) => TableCell(info, setData),
+      meta: {
+        type: "number",
+      },
     }),
     columnHelper.accessor("equipmentCosts", {
       size: 150,
       header: () => <span>Оборудование</span>,
-      cell: (info) => <span>{info.getValue()}</span>,
+      cell: (info) => TableCell(info, setData),
+      meta: {
+        type: "number",
+      },
     }),
     columnHelper.accessor("overheads", {
       size: 150,
       header: () => <span>Накладные расходы</span>,
-      cell: (info) => <span>{info.getValue()}</span>,
+      cell: (info) => TableCell(info, setData),
+      meta: {
+        type: "number",
+      },
     }),
     columnHelper.accessor("estimatedProfit", {
       size: 150,
       header: () => <span>Сметная прибыль</span>,
-      cell: (info) => <span>{info.getValue()}</span>,
+      cell: (info) => TableCell(info, setData),
+      meta: {
+        type: "number",
+      },
     }),
   ];
 };

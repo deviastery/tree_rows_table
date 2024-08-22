@@ -2,7 +2,7 @@ import { TreeRowResponse } from "src/api/tableApi.types";
 import { convertToTableData } from "../ProjectTable/basicTable.service";
 import cloneDeep from "lodash.clonedeep";
 
-export const addRow = (
+const addRow = (
   id: number,
   data: TreeRowResponse[],
   setData: React.Dispatch<React.SetStateAction<TreeRowResponse[]>>,
@@ -42,3 +42,45 @@ export const addRow = (
   setData(updatedData);
   setOriginalData(updatedData);
 };
+
+const updateData = (
+  rowIndex: number,
+  columnId: string,
+  value: string,
+  setData: React.Dispatch<React.SetStateAction<TreeRowResponse[]>>
+) => {
+  setData((old) =>
+    old.map((row, index) => {
+      if (index === rowIndex) {
+        return {
+          ...old[rowIndex],
+          [columnId]: value,
+        };
+      }
+      return row;
+    })
+  );
+};
+
+const revertData = (
+  rowIndex: number,
+  revert: boolean,
+  data: TreeRowResponse[],
+  originalData: TreeRowResponse[],
+  setData: React.Dispatch<React.SetStateAction<TreeRowResponse[]>>,
+  setOriginalData: React.Dispatch<React.SetStateAction<TreeRowResponse[]>>
+) => {
+  if (revert) {
+    setData((old) =>
+      old.map((row, index) =>
+        index === rowIndex ? originalData[rowIndex] : row
+      )
+    );
+  } else {
+    setOriginalData((old) =>
+      old.map((row, index) => (index === rowIndex ? data[rowIndex] : row))
+    );
+  }
+};
+
+export { addRow, updateData, revertData };

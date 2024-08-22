@@ -10,6 +10,7 @@ import {
   Row,
   useReactTable,
   getExpandedRowModel,
+  Table,
 } from "@tanstack/react-table";
 import styles from "./BasicTable.module.sass";
 import { OutlayRowRequest, TreeRowResponse } from "src/api/tableApi.types";
@@ -22,38 +23,11 @@ type Props = {
   setRowClick?: Dispatch<SetStateAction<Row<TreeRowResponse> | null>>;
 };
 
-const BasicTable = ({ data, columns, setRowClick }: Props) => {
+const BasicTable = ({ data, columns }: Props) => {
   const [expanded, setExpanded] = useState<ExpandedState>(
     data.reduce((acc, row, index) => ({ ...acc, [row?.id || index]: true }), {})
   );
-  // const [rowsData, setRowsData] = useState(() => [...data]);
-  // const [originalData, setOriginalData] = useState(() => [...data]);
-
-  // const addRow = () => {
-  //   console.log("Click");
-
-  //   const newRow: TreeRowResponse = {
-  //     equipmentCosts: 0,
-  //     estimatedProfit: 0,
-  //     id: Math.floor(Math.random() * 10000),
-  //     machineOperatorSalary: 0,
-  //     mainCosts: 0,
-  //     materials: 0,
-  //     mimExploitation: 0,
-  //     overheads: 0,
-  //     rowName: "",
-  //     salary: 0,
-  //     supportCosts: 0,
-  //     total: 0,
-  //   };
-  //   const setFunc = (old: (TreeRowResponse | undefined)[]) => [...old, newRow];
-  //   setRowsData(setFunc);
-  //   setOriginalData(setFunc);
-  // };
-
-  // const columns = GetTableColumns({ addRow }) as ColumnDef<
-  //   TreeRowResponse | undefined
-  // >[];
+  const [editedRows, setEditedRows] = useState({});
 
   const table = useReactTable({
     data,
@@ -66,11 +40,22 @@ const BasicTable = ({ data, columns, setRowClick }: Props) => {
     getSubRows: (row) => row?.subRows,
     getCoreRowModel: getCoreRowModel<TreeRowResponse | undefined>(),
     getExpandedRowModel: getExpandedRowModel<TreeRowResponse | undefined>(),
+    meta: {
+      editedRows,
+      setEditedRows,
+    },
   });
 
   useEffect(() => {
     table.toggleAllRowsExpanded(true);
   }, []);
+
+  const setRowClick = (row: Row<TreeRowResponse | undefined>) => {
+    setEditedRows((old: Record<number, boolean>) => ({
+      ...old,
+      [row.id]: typeof row.id === "number" ? !old[row.id] : {},
+    }));
+  };
 
   return (
     <Box className={styles.tableTemplate}>
@@ -103,7 +88,7 @@ const BasicTable = ({ data, columns, setRowClick }: Props) => {
               <tr
                 key={row.id}
                 className={styles.tableRow}
-                // onDoubleClick={() => setRowData && setRowData(row)}
+                onDoubleClick={() => setRowClick(row)}
               >
                 {row.getAllCells().map((cell) => (
                   <td
